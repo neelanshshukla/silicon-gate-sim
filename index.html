@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silicon Gate Simulator</title>
+    <style>
+        body { background: #0d0d0d; color: #fff; font-family: monospace; text-align: center; padding-top: 50px; }
+        h1 { color: #2ea043; }
+        .card { background: #1a1a1a; border: 1px solid #333; border-radius: 8px; padding: 20px; margin: 20px auto; max-width: 400px; }
+        .btn { padding: 10px 20px; background: #2ea043; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; margin: 5px; }
+        .btn-off { background: #da3633; }
+        .output { font-size: 1.2rem; color: #58a6ff; margin: 10px 0; }
+        .val { color: #fff; font-weight: bold; }
+        select { padding: 10px; font-size: 1rem; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Silicon Gate Simulator</h1>
+    <p>Powered by C Logic Engine</p>
+
+    <div class="card">
+        <h3>Inputs</h3>
+        <div>
+            A: <button class="btn" id="btn-a" onclick="toggleA()">0</button>
+            B: <button class="btn" id="btn-b" onclick="toggleB()">0</button>
+        </div>
+        <br>
+        <select id="gate-type">
+            <option value="AND">AND</option>
+            <option value="OR">OR</option>
+            <option value="XOR">XOR</option>
+            <option value="NAND">NAND</option>
+        </select>
+        <br>
+        <button class="btn" onclick="calculate()" style="width: 100%;">Calculate</button>
+    </div>
+
+    <div class="card">
+        <h3>Output</h3>
+        <div class="output" id="result">-</div>
+    </div>
+
+    <script>
+        let a = 0;
+        let b = 0;
+
+        function toggleA() {
+            a = a === 0 ? 1 : 0;
+            document.getElementById('btn-a').innerText = a;
+            document.getElementById('btn-a').className = a === 1 ? "btn" : "btn btn-off";
+        }
+
+        function toggleB() {
+            b = b === 0 ? 1 : 0;
+            document.getElementById('btn-b').innerText = b;
+            document.getElementById('btn-b').className = b === 1 ? "btn" : "btn btn-off";
+        }
+
+        function calculate() {
+            const gate = document.getElementById('gate-type').value;
+            // Send request to Python backend
+            fetch(`http://127.0.0.1:5000/calculate?gate=${gate}&a=${a}&b=${b}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('result').innerText = data.result;
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText = "Error connecting to backend.";
+                });
+        }
+    </script>
+</body>
+</html>
